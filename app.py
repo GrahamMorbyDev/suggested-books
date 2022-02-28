@@ -1,4 +1,4 @@
-# Import model
+from models import (Base, session, Book, engine)
 # Main menu - add, search, analysis, exit, view
 # add books
 # edit books
@@ -6,4 +6,4 @@
 # data cleaning
 # loop over program
 if __name__ == '__main__':
-
+    Base.metadata.create_all(engine)
