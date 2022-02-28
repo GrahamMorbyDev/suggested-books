@@ -20,6 +20,8 @@ def menu():
             input('''\rPlease choice one the options above
                      \rA number from 1-5.
                      \rPress enter to try again  ''')
+
+
 # add books
 # edit books
 # search books
@@ -37,11 +39,24 @@ def clean_date(date_str):
     return datetime.datetime(year, month, day)
 
 
+def clean_price(price_str):
+    price_float = float(price_str)
+    return int(price_float * 100)
+
+
 def add_csv():
     with open('suggested_books.csv') as csvfile:
         data = csv.reader(csvfile)
         for row in data:
-            print(row)
+            book_in_db = session.query(Book).filter(Book.title == row[0]).one_or_none()
+            if book_in_db is None:
+                title = row[0]
+                author = row[1]
+                date = clean_date(row[2])
+                price = clean_price(row[3])
+                new_book = Book(title=title, author=author, published_date=date, price=price)
+                session.add(new_book)
+        session.commit()
 
 
 def app():
@@ -69,5 +84,7 @@ def app():
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
     # app()
-    # add_csv()
-    clean_date('November 12, 2019')
+    add_csv()
+
+    for book in session.query(Book):
+        print(book)
